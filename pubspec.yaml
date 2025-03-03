@@ -1,1 +1,18 @@
+name: dsd_app
+description: A simple Flutter app for DSD.
+publish_to: 'none' # Prevents publishing to pub.dev
+version: 1.0.0+1
 
+environment:
+  sdk: ">=2.19.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
