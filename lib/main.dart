@@ -8,27 +8,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('DSD App')),
-        body: CodeInputScreen(),
-      ),
+      home: HomeScreen(),
     );
   }
 }
 
-class CodeInputScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _CodeInputScreenState createState() => _CodeInputScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _CodeInputScreenState extends State<CodeInputScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isValid = false;
   bool _isError = false;
 
   void _checkCode() {
     final code = _controller.text;
-    if (code.length == 9) {
+    if (code.length == 9 && code.contains(RegExp(r'^[0-9]+$'))) {
       setState(() {
         _isValid = true;
         _isError = false;
@@ -38,6 +35,8 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
         _isValid = false;
         _isError = true;
       });
+
+      // Сбрасываем ошибку через 1 секунду
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           _isError = false;
@@ -57,39 +56,49 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (!_isValid)
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: 'Код реквизита',
-                errorText: _isError ? 'Пожалуйста, введите корректные реквизиты' : null,
-              ),
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _checkCode(),
-            ),
-          if (!_isValid)
-            ElevatedButton(
-              onPressed: _checkCode,
-              child: Text('Подключить'),
-            ),
-          if (_isValid)
-            Column(
-              children: [
-                Icon(Icons.check_circle, color: Colors.green, size: 100),
-                Text('working ...', style: TextStyle(fontSize: 24)),
-                ElevatedButton(
-                  onPressed: _reset,
-                  child: Text('Отключить'),
-                ),
-              ],
-            ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('DSD App'),
       ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (!_isValid)
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  hintText: 'Введите код реквизита',
+                  errorText: _isError ? 'Пожалуйста, введите 9 цифр' : null,
+                ),
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _checkCode(),
+              ),
+            if (!_isValid)
+              SizedBox(height: 20),
+            if (!_isValid)
+              ElevatedButton(
+                onPressed: _checkCode,
+                child: Text('Подключить'),
+              ),
+            if (_isValid)
+              Column(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green, size: 100),
+                  SizedBox(height: 20),
+                  Text('working ...', style: TextStyle(fontSize: 24)),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _reset,
+                    child: Text('Отключить'),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+      backgroundColor: _isError ? Colors.red : Colors.white,
     );
   }
 }
