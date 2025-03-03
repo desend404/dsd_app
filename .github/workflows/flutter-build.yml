@@ -1,0 +1,36 @@
+name: Flutter Build APK
+
+on:
+  push:
+    branches:
+      - main  # Запускать сборку при пуше в ветку main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Используем последнюю версию Ubuntu
+
+    steps:
+      # Шаг 1: Клонируем репозиторий
+      - name: Checkout code
+        uses: actions/checkout@v4  # Используем актуальную версию checkout
+
+      # Шаг 2: Устанавливаем Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'  # Используем стабильную версию Flutter
+
+      # Шаг 3: Устанавливаем зависимости
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Шаг 4: Собираем APK
+      - name: Build APK
+        run: flutter build apk --release
+
+      # Шаг 5: Загружаем APK как артефакт (используем v4)
+      - name: Upload APK
+        uses: actions/upload-artifact@v4  # Используем актуальную версию upload-artifact
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
